@@ -1,8 +1,7 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from models import db, User
 from config import Config
-from flask import send_from_directory
 from werkzeug.utils import secure_filename
 import os
 
@@ -25,9 +24,10 @@ login_manager.login_view = 'login'
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# Create database + tables automatically
+# Create database + upload folder
 with app.app_context():
     db.create_all()
+    os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # creates folder if missing
 
 @app.route('/')
 def index():
@@ -41,7 +41,6 @@ def register():
         phone = request.form.get('phone', '').strip() or None
         email = request.form.get('email', '').strip().lower() or None
 
-        # Check if username, phone or email already exists
         if User.query.filter((User.username == username) | 
                            (User.phone == phone) | 
                            (User.email == email)).first():
@@ -51,7 +50,6 @@ def register():
         user = User(username=username, phone=phone, email=email)
         user.set_password(password)
 
-        # Handle profile picture
         if 'profile_pic' in request.files:
             file = request.files['profile_pic']
             if file and allowed_file(file.filename):
@@ -65,6 +63,7 @@ def register():
         return redirect(url_for('login'))
 
     return render_template('register.html')
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -79,19 +78,21 @@ def login():
             flash('Wrong username or password', 'danger')
 
     return render_template('login.html')
-    @app.route('/profile')
+
+# Fixed: This route was inside login() before — now it's outside
+@app.route('/profile')
 @login_required
 def profile():
     return render_template('profile.html')
-    
-@app.route('/uploads/profiles/<filename>')
-def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-    
+
 @app.route('/home')
 @login_required
 def home():
     return render_template('home.html', user=current_user)
+
+@app.route('/uploads/profiles/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @app.route('/logout')
 @login_required
