@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="bg-gray-800 bg-opacity-70 backdrop-blur-lg rounded-2xl shadow-2xl p-10 border border-purple-700">
+  <h2 class="text-4xl logo-font text-center mb-8 neon">Welcome Back</h2>
+  <form method="POST">
+    <input type="text" name="username" placeholder="Username" required
+           class="w-full p-4 mb-5 bg-gray-900 border border-purple-600 rounded-xl focus:outline-none focus:border-pink-500"/>
+    <input type="password" name="password" placeholder="Password" required
+           class="w-full p-4 mb-8 bg-gray-900 border border-purple-600 rounded-xl focus:outline-none focus:border-pink-500"/>
+
+    <button type="submit" class="w-full py-4 btn-neon text-white font-bold rounded-xl shadow-lg hover:scale-105 transition">
+      Log In
+    </button>
+  </form>
+  <p class="text-center mt-6 text-gray-400">
+    No account? <a href="/register" class="text-pink-400 hover:underline">Sign up</a>
+  </p>
+</div>
+{% endblock %}
