@@ -2,9 +2,20 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from models import db, User
 from config import Config
+from flask import send_from_directory
+from werkzeug.utils import secure_filename
+import os
 
 app = Flask(__name__)
 app.config.from_object(Config)
+
+# Upload settings
+UPLOAD_FOLDER = 'static/uploads/profiles'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 db.init_app(app)
 login_manager = LoginManager(app)
@@ -27,19 +38,33 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        phone = request.form.get('phone', '').strip() or None
+        email = request.form.get('email', '').strip().lower() or None
 
-        if User.query.filter_by(username=username).first():
-            flash('Username already taken!', 'danger')
-        else:
-            user = User(username=username)
-            user.set_password(password)
-            db.session.add(user)
-            db.session.commit()
-            flash('Account created! Login now', 'success')
-            return redirect(url_for('login'))
+        # Check if username, phone or email already exists
+        if User.query.filter((User.username == username) | 
+                           (User.phone == phone) | 
+                           (User.email == email)).first():
+            flash('Username, phone or email already taken!', 'danger')
+            return redirect(url_for('register'))
+
+        user = User(username=username, phone=phone, email=email)
+        user.set_password(password)
+
+        # Handle profile picture
+        if 'profile_pic' in request.files:
+            file = request.files['profile_pic']
+            if file and allowed_file(file.filename):
+                filename = secure_filename(f"{username}_{file.filename}")
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                user.profile_pic = filename
+
+        db.session.add(user)
+        db.session.commit()
+        flash('Account created successfully!', 'success')
+        return redirect(url_for('login'))
 
     return render_template('register.html')
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -54,11 +79,19 @@ def login():
             flash('Wrong username or password', 'danger')
 
     return render_template('login.html')
-
+    @app.route('/profile')
+@login_required
+def profile():
+    return render_template('profile.html')
+    
+@app.route('/uploads/profiles/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+    
 @app.route('/home')
 @login_required
 def home():
-    return render_template('home.html', username=current_user.username)
+    return render_template('home.html', user=current_user)
 
 @app.route('/logout')
 @login_required
