@@ -2,6 +2,12 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from models import db, User
 from config import Config
+from mega_storage import MegaStorage
+
+# Initialize MEGA right after creating the app
+@app.before_first_request
+def initialize_mega():
+    MegaStorage()  # will login once with your account
 
 app = Flask(__name__)
 app.config.from_object(Config)
