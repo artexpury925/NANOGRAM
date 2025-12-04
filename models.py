@@ -1,9 +1,8 @@
-# models.py – replace your current User class with this
+# models.py  ← replace everything in this file with this
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
-import os
 
 db = SQLAlchemy()
 
@@ -12,10 +11,9 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
     
-    # NEW FIELDS
-    profile_pic = db.Column(db.String(200), default="default.jpg")  # filename
-    phone = db.Column(db.String(20), nullable=True, unique=True)     # optional
-    email = db.Column(db.String(120), nullable=True, unique=True)   # optional
+    profile_pic = db.Column(db.String(200), default="default.jpg")
+    phone = db.Column(db.String(20), nullable=True, unique=True)
+    email = db.Column(db.String(120), nullable=True, unique=True)
     
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
