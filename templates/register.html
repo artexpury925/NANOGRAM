@@ -1,23 +1,23 @@
-{% extends "base.html" %}
-{% block title %}Register{% endblock %}
-
 {% block content %}
 <div class="bg-gray-800 bg-opacity-70 backdrop-blur-lg rounded-2xl shadow-2xl p-10 border border-purple-700">
-  <h2 class="text-4xl logo-font text-center mb-8 neon">Join Nanogram</h2>
-  <form method="POST">
-    <input type="text" name="username" placeholder="Username" required
-           class="w-full p-4 mb-5 bg-gray-900 border border-purple-600 rounded-xl focus:outline-none focus:border-pink-500 neon-placeholder"/>
-    <input type="email" name="email" placeholder="Email" required
-           class="w-full p-4 mb-5 bg-gray-900 border border-purple-600 rounded-xl focus:outline-none focus:border-pink-500"/>
-    <input type="password" name="password" placeholder="Password" required
-           class="w-full p-4 mb-8 bg-gray-900 border border-purple-600 rounded-xl focus:outline-none focus:border-pink-500"/>
+  <h2 class="text-4xl logo-font text-center mb-8 neon">Create Account</h2>
+  <form method="POST" enctype="multipart/form-data">
+    <input type="text" name="username" placeholder="Username" required class="w-full p-4 mb-4 bg-gray-900 border border-purple-600 rounded-xl focus:outline-none focus:border-pink-500"/>
+    
+    <input type="tel" name="phone" placeholder="Phone (optional)" class="w-full p-4 mb-4 bg-gray-900 border border-purple-600 rounded-xl focus:outline-none focus:border-pink-500"/>
+    
+    <input type="email" name="email" placeholder="Email (optional)" class="w-full p-4 mb-4 bg-gray-900 border border-purple-600 rounded-xl focus:outline-none focus:border-pink-500"/>
+    
+    <input type="password" name="password" placeholder="Password" required class="w-full p-4 mb-4 bg-gray-900 border border-purple-600 rounded-xl focus:outline-none focus:border-pink-500"/>
+    
+    <div class="mb-6">
+      <label class="text-gray-400 text-sm">Profile Picture (optional)</label>
+      <input type="file" name="profile_pic" accept="image/*" class="w-full text-gray-400"/>
+    </div>
 
-    <button type="submit" class="w-full py-4 btn-neon text-white font-bold rounded-xl shadow-lg transform hover:scale-105 transition duration-300">
-      Create Account
+    <button type="submit" class="w-full py-4 btn-neon text-white font-bold rounded-xl shadow-lg hover:scale-105 transition">
+      Sign Up
     </button>
   </form>
-  <p class="text-center mt-6 text-gray-400">
-    Already have an account? <a href="/login" class="text-pink-400 hover:underline">Log in</a>
-  </p>
 </div>
 {% endblock %}
