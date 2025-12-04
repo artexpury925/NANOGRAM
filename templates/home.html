@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="text-center mt-10">
+  <img src="{{ url_for('uploaded_file', filename=user.profile_pic) }}" 
+       alt="Profile" class="w-32 h-32 rounded-full mx-auto border-4 border-pink-500 shadow-lg object-cover">
+  
+       {% if user.profile_pic == 'default.jpg' %}grayscale{% endif %}">
+
+  <h1 class="text-4xl logo-font neon mt-6">Welcome, {{ user.username }}!</h1>
+  
+  {% if user.phone %}
+    <p class="text-xl text-purple-300 mt-4">Phone: {{ user.phone }}</p>
+  {% endif %}
+  
+  {% if user.email %}
+    <p class="text-xl text-purple-300">Email: {{ user.email }}</p>
+  {% endif %}
+
+  <a href="/profile" class="mt-8 inline-block px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full hover:scale-110 transition">
+    View Full Profile
+  </a>
+</div>
+{% endblock %}
